@@ -2,13 +2,14 @@
 import int = require('../common/int');
 import {Board, SerializedBoard} from '../common/board';
 import {BoardCell} from '../common/boardCell';
+import {IModel, IModelListener} from '../common/model';
 
-export class RemoteModel implements int.IModel {
+export class RemoteModel implements IModel {
 
 	private _socket: SocketIOClient.Socket;
 	private _gameId: string;
 	private _board: Board;
-	private _listeners: int.IModelListener[];
+	private _listeners: IModelListener[];
 
 	constructor(socket: SocketIOClient.Socket, gameId: string) {
 		this._socket = socket;
@@ -27,7 +28,7 @@ export class RemoteModel implements int.IModel {
 		this._socket.emit('message', event);
 	}
 
-	public addListener(listener: int.IModelListener): void {
+	public addListener(listener: IModelListener): void {
 		for (let i = 0; i < this._listeners.length; i++) {
 			if (this._listeners[i] === listener) {
 				// Don't add the same listener twice
@@ -38,7 +39,7 @@ export class RemoteModel implements int.IModel {
 		listener.onChanged(this);
 	}
 
-	public removeListener(listener: int.IModelListener): void {
+	public removeListener(listener: IModelListener): void {
 		for (let i = 0; i < this._listeners.length; i++) {
 			if (this._listeners[i] === listener) {
 				this._listeners.splice(i, 1);

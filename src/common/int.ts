@@ -1,25 +1,5 @@
 
-import {BoardCell} from './boardCell';
 import {SerializedBoard} from './board';
-
-export interface IModelListener {
-	onChanged(model: IModel);
-}
-
-export interface IModel {
-	isFinished: boolean;
-
-	addListener(listener: IModelListener): void;
-	removeListener(listener: IModelListener): void;
-
-	getCells(): BoardCell[];
-
-	reset(): void;
-	up(): void;
-	down(): void;
-	left(): void;
-	right(): void;
-}
 
 // Events sent by the client
 export enum ClientEventType {

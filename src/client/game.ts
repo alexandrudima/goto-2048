@@ -3,8 +3,9 @@ import _model = require('../common/simpleModel');
 import remoteModel = require('./remoteModel');
 import int = require('../common/int');
 import view = require('./view');
+import {IModel} from '../common/model';
 
-var createdModels: int.IModel[] = [];
+var createdModels: IModel[] = [];
 
 document.addEventListener('keydown', function (e) {
 	switch (e.keyCode) {

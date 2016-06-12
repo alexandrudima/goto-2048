@@ -1,5 +1,5 @@
 
-import {IModel, IModelListener} from './int';
+import {IModel, IModelListener} from './model';
 import {BoardCell} from './boardCell';
 import {BoardElement} from './boardElement';
 import {Board, SerializedBoard} from './board';

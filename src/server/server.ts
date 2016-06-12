@@ -5,6 +5,7 @@ import sio = require('socket.io');
 import path = require('path');
 import _model = require('../common/simpleModel');
 import int = require('../common/int');
+import {IModel, IModelListener} from '../common/model';
 
 var app = express();
 app.use(express.static(path.join(__dirname, '../../public')));
@@ -25,8 +26,8 @@ io.sockets.on('connection', function (socket) {
 
 	var model: _model.SimpleModel = null;
 
-	var modelListener: int.IModelListener = {
-		onChanged: (model: int.IModel) => {
+	var modelListener: IModelListener = {
+		onChanged: (model: IModel) => {
 			send({
 				type: int.ServerEventType.ModelChanged,
 				data: (<_model.SimpleModel>model).serialize()

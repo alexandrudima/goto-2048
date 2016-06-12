@@ -1,6 +1,6 @@
 
 import "../lib/css!./view";
-import {IModel, IModelListener} from '../common/int';
+import {IModel, IModelListener} from '../common/model';
 import {BoardCell} from '../common/boardCell';
 
 function pos(i: number): number {
