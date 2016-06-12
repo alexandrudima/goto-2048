@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Demo</title>
+	<style>
+		.game-container {
+			position: absolute;
+			top: 50px;
+			left: 50px;
+		}
+
+		.game-container.multi {
+			position: absolute;
+			top: 50px;
+			left: 500px;
+		}
+
+		.qr {
+			top: 50px;
+			right: 50px;
+			position: fixed;
+			width: 300px;
+			height: 300px;
+		}
+	</style>
+</head>
+<body>
+
+<div id="control">
+	<button id="single">Single Player</button>
+	<button id="multi">Multi Player</button>
+</div>
+
+<div class="game-container">
+	<span id="explanation"></span>
+	<div id="container"></div>
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="lib/jquery.touchSwipe.min.js"></script>
+
+<script src="lib/qr.js"></script>
+<script src="lib/require.js"></script>
+
+<script>
+
+	require(['client/game', '/socket.io/socket.io.js'], function(game, io) {
+		var single = document.getElementById('single');
+		var multi = document.getElementById('multi');
+		var container = document.getElementById('container');
+		var explanation = document.getElementById('explanation');
+
+		single.onclick = function() {
+			// Single player game
+			game.create(container);
+			disable('Refresh to go multi-player!');
+		};
+
+		multi.onclick = function() {
+			// Multi player game
+			game.createMultiplayer(container, io);
+			disable('Share URL with friends!');
+
+			var qrNode = document.createElement('canvas');
+			qrNode.className = 'qr';
+			qrNode.width = 500;
+			qrNode.height = 500;
+			document.body.appendChild(qrNode);
+
+			qr.canvas({
+				canvas: qrNode,
+				value: window.location.toString()
+			});
+		};
+
+		function disable(expl) {
+			explanation.appendChild(document.createTextNode(expl));
+			single.onclick = null;
+			multi.onclick = null;
+			single.style.display = 'none';
+			multi.style.display = 'none';
+		}
+
+		if (location.hash !== '') {
+			multi.onclick();
+		}
+	});
+</script>
+
+</body>
+</html>
