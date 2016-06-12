@@ -52,3 +52,4 @@
     }());
     exports.BoardElement = BoardElement;
 });
+//# sourceMappingURL=boardElement.js.map

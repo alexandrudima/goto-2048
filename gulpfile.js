@@ -4,12 +4,24 @@ var assign = require('object-assign');
 var merge = require('merge-stream');
 var rimraf = require('rimraf');
 var es = require('event-stream');
+var path = require('path');
 
 // TypeScript compilation
 var clientCompilation = tsb.create(assign({ verbose: true }, require('./tsconfig.json').compilerOptions));
 
 function compileTask() {
-	var compilation = gulp.src(['lib/**/*.ts', 'src/**/*.ts']).pipe(clientCompilation());
+	var compilation = (
+		gulp.src(['lib/**/*.ts', 'src/**/*.ts'])
+		.pipe(clientCompilation())
+		.pipe(es.through(function(data) {
+			if (/\.js\.map$/.test(data.path)) {
+				data.contents = new Buffer(
+					data.contents.toString().replace('../../../../../src', '../../../src')
+				);
+			}
+			this.emit('data', data);
+		}))
+	);
 
 	var client = compilation.pipe(es.through(function(data) {
 		if (/common|client/.test(data.path)) {

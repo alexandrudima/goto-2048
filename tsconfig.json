@@ -2,7 +2,8 @@
   "compilerOptions": {
     "outDir": "out",
     "target": "es5",
-    "module": "umd"
+    "module": "umd",
+    "sourceMap": true
   },
   "exclude": [
     "node_modules"

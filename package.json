@@ -14,6 +14,7 @@
   "devDependencies": {
     "event-stream": "^3.3.2",
     "gulp": "^3.9.1",
+    "gulp-sourcemaps": "^1.6.0",
     "gulp-tsb": "^1.10.4",
     "merge-stream": "^1.0.0",
     "nodemon": "^1.9.2",

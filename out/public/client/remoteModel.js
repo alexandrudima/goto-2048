@@ -101,3 +101,4 @@
     }());
     exports.RemoteModel = RemoteModel;
 });
+//# sourceMappingURL=remoteModel.js.map

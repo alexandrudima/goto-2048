@@ -149,3 +149,4 @@
     }());
     exports.SimpleModel = SimpleModel;
 });
+//# sourceMappingURL=simpleModel.js.map
