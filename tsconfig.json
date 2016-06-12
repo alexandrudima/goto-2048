@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "out",
+    "target": "es5",
+    "module": "umd"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -1,8 +1,5 @@
-/// <reference path="../../lib/node.d.ts" />
-/// <reference path="../../lib/express.d.ts" />
-/// <reference path="../../lib/socket.io.d.ts" />
 
-import express = require('express');
+import * as express from 'express';
 import http = require('http');
 import sio = require('socket.io');
 import path = require('path');

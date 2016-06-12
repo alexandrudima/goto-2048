@@ -1,4 +1,6 @@
 
+// import {BoardCell} from './boardCell';
+
 export interface IModelListener {
 	onChanged(model: IModel);
 }

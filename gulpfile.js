@@ -1,59 +1,48 @@
 var gulp = require('gulp');
-var ts = require('gulp-typescript');
-var path = require('path');
+var tsb = require('gulp-tsb');
+var assign = require('object-assign');
+var merge = require('merge-stream');
+var rimraf = require('rimraf');
+var es = require('event-stream');
 
-var clientProject = ts.createProject({
-    declarationFiles: true,
-    noExternalResolve: true,
-	module: 'amd'
-});
+// TypeScript compilation
+var clientCompilation = tsb.create(assign({ verbose: true }, require('./tsconfig.json').compilerOptions));
 
-var serverProject = ts.createProject({
-    declarationFiles: true,
-    noExternalResolve: true,
-	module: 'commonJS'
-});
+function compileTask() {
+	var compilation = gulp.src(['lib/**/*.ts', 'src/**/*.ts']).pipe(clientCompilation());
 
-function destTransform(to, strip) {
-	return function(file) {
-		var result = path.join(file.cwd, to, file.base.substr(file.cwd.length + strip.length + 1/* +1 for / */));
-//		console.log(' * ', file.path);
-//		console.log(' ===> ', result);
-		return result;
-	}
+	var client = compilation.pipe(es.through(function(data) {
+		if (/common|client/.test(data.path)) {
+			this.emit('data', data);
+		}
+	}));
+
+	var server = compilation.pipe(es.through(function(data) {
+		if (/common|server/.test(data.path)) {
+			this.emit('data', data);
+		}
+	}));
+
+	return merge(
+		merge(
+			gulp.src('public/**/*', { base: 'public' }),
+			client
+		).pipe(gulp.dest('out/public')),
+
+		merge(
+			server
+		).pipe(gulp.dest('out/server'))
+	);
 }
 
-gulp.task('publicFolder', function() {
-	return gulp.src(['public/**/*.*'])
-		.pipe(gulp.dest(destTransform('out/public', 'public')));
+gulp.task('compile-clean', function(cb) { rimraf('out', { maxBusyTries: 1 }, cb); });
+
+gulp.task('compile', ['compile-clean'], compileTask);
+
+gulp.task('compile-without-clean', compileTask);
+
+gulp.task('watch', ['compile'], function() {
+	gulp.watch(['lib/**/*.ts', 'src/**/*.ts', 'public/**/*'], ['compile-without-clean']);
 });
 
-gulp.task('clientResources', function() {
-	return gulp.src(['src/client/**/*.{css,png}'])
-		.pipe(gulp.dest(destTransform('out/public', 'src')));
-});
-
-gulp.task('clientScripts', function() {
-	return gulp.src(['src/client/**/*.ts', 'src/common/**/*.ts', , 'lib/**/*.ts'])
-		.pipe(ts(clientProject))
-		.js.pipe(gulp.dest(destTransform('out/public', 'src')));
-});
-
-gulp.task('serverScripts', function() {
-	return gulp.src(['src/server/**/*.ts', 'src/common/**/*.ts', 'lib/**/*.ts'])
-			.pipe(ts(serverProject))
-			.js.pipe(gulp.dest(destTransform('out/server', 'src')));
-});
-
-gulp.task('watch', ['clientScripts', 'serverScripts'], function() {
-    gulp.watch('**/*.ts', ['clientScripts', 'serverScripts']);
-});
-gulp.task('watchPublic', ['publicFolder'], function() {
-    gulp.watch('public/**/*.*', ['publicFolder']);
-});
-gulp.task('watchClientResources', ['clientResources'], function() {
-    gulp.watch('src/client/**/*.{css,png}', ['clientResources']);
-});
-
-
-gulp.task('default', ['watch', 'watchPublic', 'watchClientResources']);
+gulp.task('default', ['compile']);
