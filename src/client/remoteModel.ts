@@ -2,6 +2,7 @@
 
 import int = require('../common/int');
 import board = require('../common/board');
+import {BoardCell} from '../common/boardCell';
 
 export class RemoteModel implements int.IModel {
 
@@ -68,7 +69,7 @@ export class RemoteModel implements int.IModel {
 		return !this._board.hasEmptyElement() && !this._board.isMergeable();
 	}
 
-	public getCells(): int.IBoardCell[] {
+	public getCells(): BoardCell[] {
 		return this._board.getCells();
 	}
 

@@ -1,5 +1,5 @@
 
-// import {BoardCell} from './boardCell';
+import {BoardCell} from './boardCell';
 
 export interface IModelListener {
 	onChanged(model: IModel);
@@ -11,20 +11,13 @@ export interface IModel {
 	addListener(listener: IModelListener): void;
 	removeListener(listener: IModelListener): void;
 
-	getCells(): IBoardCell[];
+	getCells(): BoardCell[];
 
 	reset(): void;
 	up(): void;
 	down(): void;
 	left(): void;
 	right(): void;
-}
-
-export interface IBoardCell {
-	id: number;
-	row: number;
-	col: number;
-	value: number;
 }
 
 export enum ClientEventType {

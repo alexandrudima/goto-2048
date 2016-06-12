@@ -1,25 +1,25 @@
 
-import int = require('../common/int');
-import boardCell = require('./boardCell');
-import boardElement = require('./boardElement');
-import board = require('./board');
+import {IModel, IModelListener} from './int';
+import {BoardCell} from './boardCell';
+import {BoardElement} from './boardElement';
+import {Board, SerializedBoard} from './board';
 
-export class Model implements int.IModel {
+export class Model implements IModel {
 
 	private _boardSize: number;
-	private _board: board.Board;
-	private _listeners: int.IModelListener[];
+	private _board: Board;
+	private _listeners: IModelListener[];
 	private _lastElementId: number;
 
 	constructor(boardSize: number) {
 		this._boardSize = boardSize;
 		this._listeners = [];
 		this._lastElementId = 0;
-		this._setBoard(new board.Board(this._boardSize));
+		this._setBoard(new Board(this._boardSize));
 	}
 
-	public addListener(listener: int.IModelListener): void {
-		for (var i = 0; i < this._listeners.length; i++) {
+	public addListener(listener: IModelListener): void {
+		for (let i = 0; i < this._listeners.length; i++) {
 			if (this._listeners[i] === listener) {
 				// Don't add the same listener twice
 				return;
@@ -29,8 +29,8 @@ export class Model implements int.IModel {
 		listener.onChanged(this);
 	}
 
-	public removeListener(listener: int.IModelListener): void {
-		for (var i = 0; i < this._listeners.length; i++) {
+	public removeListener(listener: IModelListener): void {
+		for (let i = 0; i < this._listeners.length; i++) {
 			if (this._listeners[i] === listener) {
 				this._listeners.splice(i, 1);
 				return;
@@ -38,11 +38,11 @@ export class Model implements int.IModel {
 		}
 	}
 
-	public serialize(): any {
+	public serialize(): SerializedBoard {
 		return this._board.serialize();
 	}
 
-	public getCells(): int.IBoardCell[] {
+	public getCells(): BoardCell[] {
 		return this._board.getCells();
 	}
 
@@ -51,14 +51,14 @@ export class Model implements int.IModel {
 	}
 
 	public reset(): void {
-		this._setBoard(new board.Board(this._boardSize));
+		this._setBoard(new Board(this._boardSize));
 	}
 
 	public up(): void {
-		var newBoard = new board.Board(this._boardSize);
-		for (var col = 0; col < this._boardSize; col++) {
-			var rows = Model._mergeValues(this._extractNonZeroRows(col, false));
-			for (var row = 0; row < rows.length; row++) {
+		let newBoard = new Board(this._boardSize);
+		for (let col = 0; col < this._boardSize; col++) {
+			let rows = Model._mergeValues(this._extractNonZeroRows(col, false));
+			for (let row = 0; row < rows.length; row++) {
 				newBoard.set(row, col, rows[row]);
 			}
 		}
@@ -66,10 +66,10 @@ export class Model implements int.IModel {
 	}
 
 	public down(): void {
-		var newBoard = new board.Board(this._boardSize);
-		for (var col = 0; col < this._boardSize; col++) {
-			var rows = Model._mergeValues(this._extractNonZeroRows(col, true));
-			for (var row = 0; row < rows.length; row++) {
+		let newBoard = new Board(this._boardSize);
+		for (let col = 0; col < this._boardSize; col++) {
+			let rows = Model._mergeValues(this._extractNonZeroRows(col, true));
+			for (let row = 0; row < rows.length; row++) {
 				newBoard.set(this._boardSize - row - 1, col, rows[row]);
 			}
 		}
@@ -77,10 +77,10 @@ export class Model implements int.IModel {
 	}
 
 	public left(): void {
-		var newBoard = new board.Board(this._boardSize);
-		for (var row = 0; row < this._boardSize; row++) {
-			var columns = Model._mergeValues(this._extractNonZeroColumns(row, false));
-			for (var col = 0; col < columns.length; col++) {
+		let newBoard = new Board(this._boardSize);
+		for (let row = 0; row < this._boardSize; row++) {
+			let columns = Model._mergeValues(this._extractNonZeroColumns(row, false));
+			for (let col = 0; col < columns.length; col++) {
 				newBoard.set(row, col, columns[col]);
 			}
 		}
@@ -88,29 +88,29 @@ export class Model implements int.IModel {
 	}
 
 	public right(): void {
-		var newBoard = new board.Board(this._boardSize);
-		for (var row = 0; row < this._boardSize; row++) {
-			var columns = Model._mergeValues(this._extractNonZeroColumns(row, true));
-			for (var col = 0; col < columns.length; col++) {
+		let newBoard = new Board(this._boardSize);
+		for (let row = 0; row < this._boardSize; row++) {
+			let columns = Model._mergeValues(this._extractNonZeroColumns(row, true));
+			for (let col = 0; col < columns.length; col++) {
 				newBoard.set(row, this._boardSize - col - 1, columns[col]);
 			}
 		}
 		this._setBoard(newBoard);
 	}
 
-	private _setBoard(newBoard: board.Board) {
+	private _setBoard(newBoard: Board) {
 		newBoard.spawn(++this._lastElementId);
 		this._board = newBoard;
-		var listeners = this._listeners.slice(0);
-		for (var i = 0; i < listeners.length; i++) {
+		let listeners = this._listeners.slice(0);
+		for (let i = 0; i < listeners.length; i++) {
 			listeners[i].onChanged(this);
 		}
 	}
 
-	private _extractNonZeroRows(col: number, reverse: boolean): boardElement.BoardElement[] {
-		var values: boardElement.BoardElement[] = [];
-		for (var row = 0; row < this._boardSize; row++) {
-			var el = this._board.get(row, col);
+	private _extractNonZeroRows(col: number, reverse: boolean): BoardElement[] {
+		let values: BoardElement[] = [];
+		for (let row = 0; row < this._boardSize; row++) {
+			let el = this._board.get(row, col);
 			if (!el.isEmpty) {
 				values.push(el);
 			}
@@ -121,10 +121,10 @@ export class Model implements int.IModel {
 		return values;
 	}
 
-	private _extractNonZeroColumns(row: number, reverse: boolean): boardElement.BoardElement[] {
-		var values: boardElement.BoardElement[] = [];
-		for (var col = 0; col < this._boardSize; col++) {
-			var el = this._board.get(row, col);
+	private _extractNonZeroColumns(row: number, reverse: boolean): BoardElement[] {
+		let values: BoardElement[] = [];
+		for (let col = 0; col < this._boardSize; col++) {
+			let el = this._board.get(row, col);
 			if (!el.isEmpty) {
 				values.push(el);
 			}
@@ -135,15 +135,15 @@ export class Model implements int.IModel {
 		return values;
 	}
 
-	private static _mergeValues(values: boardElement.BoardElement[]): boardElement.BoardElement[] {
-		var r: boardElement.BoardElement[] = [];
-		var previous = boardElement.BoardElement.EMPTY;
-		for (var i = 0; i < values.length; i++) {
+	private static _mergeValues(values: BoardElement[]): BoardElement[] {
+		let r: BoardElement[] = [];
+		let previous = BoardElement.EMPTY;
+		for (let i = 0; i < values.length; i++) {
 			if (previous.isEmpty) {
 				previous = values[i];
 			} else if (previous.canMerge(values[i])) {
 				r.push(previous.merge(values[i]));
-				previous = boardElement.BoardElement.EMPTY;
+				previous = BoardElement.EMPTY;
 			} else {
 				r.push(previous);
 				previous = values[i];

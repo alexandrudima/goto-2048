@@ -26,6 +26,7 @@ function compileTask() {
 	return merge(
 		merge(
 			gulp.src('public/**/*', { base: 'public' }),
+			gulp.src('src/client/**/*.css', { base: 'src' }),
 			client
 		).pipe(gulp.dest('out/public')),
 
@@ -42,7 +43,7 @@ gulp.task('compile', ['compile-clean'], compileTask);
 gulp.task('compile-without-clean', compileTask);
 
 gulp.task('watch', ['compile'], function() {
-	gulp.watch(['lib/**/*.ts', 'src/**/*.ts', 'public/**/*'], ['compile-without-clean']);
+	gulp.watch(['lib/**/*', 'src/**/*', 'public/**/*'], ['compile-without-clean']);
 });
 
 gulp.task('default', ['compile']);

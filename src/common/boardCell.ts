@@ -1,6 +1,5 @@
-import int = require('../common/int');
 
-export class BoardCell implements int.IBoardCell {
+export class BoardCell {
 	private _id: number;
 	private _row: number;
 	private _col: number;

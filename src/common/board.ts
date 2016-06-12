@@ -1,36 +1,38 @@
 
-import int = require('../common/int');
-import boardElement = require('./boardElement');
-import boardCell = require('./boardCell');
+import {BoardElement} from './boardElement';
+import {BoardCell} from './boardCell';
 
 export class Board {
 
 	private _boardSize: number;
-	private _elements: boardElement.BoardElement[][];
+	private _elements: BoardElement[][];
 
 	constructor(boardSize: number) {
 		this._boardSize = boardSize;
 		this._elements = [];
-		for (var row = 0; row < boardSize; row++) {
+		for (let row = 0; row < boardSize; row++) {
 			this._elements[row] = [];
-			for (var col = 0; col < boardSize; col++) {
-				this._elements[row][col] = boardElement.BoardElement.EMPTY;
+			for (let col = 0; col < boardSize; col++) {
+				this._elements[row][col] = BoardElement.EMPTY;
 			}
 		}
 	}
 
-	public set(row: number, column: number, value: boardElement.BoardElement): void {
+	public set(row: number, column: number, value: BoardElement): void {
 		this._elements[row][column] = value;
 	}
 
-	public get(row: number, column: number): boardElement.BoardElement {
+	public get(row: number, column: number): BoardElement {
 		return this._elements[row][column];
 	}
 
+	/**
+	 * Create a new element randomly (a 2 or a 4)
+	 */
 	public spawn(id: number): void {
-		var emptySlots: number[] = [];
-		for (var row = 0; row < this._boardSize; row++) {
-			for (var col = 0; col < this._boardSize; col++) {
+		let emptySlots: number[] = [];
+		for (let row = 0; row < this._boardSize; row++) {
+			for (let col = 0; col < this._boardSize; col++) {
 				if (this._elements[row][col].isEmpty) {
 					emptySlots.push(row * this._boardSize + col);
 				}
@@ -39,35 +41,33 @@ export class Board {
 		if (emptySlots.length === 0) {
 			return;
 		}
-		var pickedSlot = emptySlots[Board.getRandomInt(0, emptySlots.length)];
-		var row = Math.floor(pickedSlot / this._boardSize);
-		var col = pickedSlot % this._boardSize;
-
-		var pickedValue = Board.getRandomInt(1, 3) * 2;
-
-		this.set(row, col, new boardElement.BoardElement(id, 0, pickedValue));
+		let pickedSlot = emptySlots[Board.getRandomInt(0, emptySlots.length)];
+		let row = Math.floor(pickedSlot / this._boardSize);
+		let col = pickedSlot % this._boardSize;
+		let pickedValue = Board.getRandomInt(1, 3) * 2;
+		this.set(row, col, new BoardElement(id, 0, pickedValue));
 	}
 
-	public static deserialize(data: any): Board {
-		var size = data.length;
-		var r = new Board(size);
+	public static deserialize(data: SerializedBoard): Board {
+		let size = data.length;
+		let r = new Board(size);
 
-		for (var row = 0; row < size; row++) {
-			for (var col = 0; col < size; col++) {
-				var el = data[row][col];
-				r.set(row, col, new boardElement.BoardElement(el.id, el.mergedId, el.value));
+		for (let row = 0; row < size; row++) {
+			for (let col = 0; col < size; col++) {
+				let el = data[row][col];
+				r.set(row, col, new BoardElement(el.id, el.mergedId, el.value));
 			}
 		}
 
 		return r;
 	}
 
-	public serialize(): any {
-		var r: any[][] = [];
-		for (var row = 0; row < this._boardSize; row++) {
+	public serialize(): SerializedBoard {
+		let r: SerializedBoard = [];
+		for (let row = 0; row < this._boardSize; row++) {
 			r[row] = [];
-			for (var col = 0; col < this._boardSize; col++) {
-				var el = this._elements[row][col];
+			for (let col = 0; col < this._boardSize; col++) {
+				let el = this._elements[row][col];
 				r[row][col] = {
 					id: el.id,
 					mergedId: el.mergedId,
@@ -78,16 +78,16 @@ export class Board {
 		return r;
 	}
 
-	public getCells(): int.IBoardCell[] {
-		var r: int.IBoardCell[] = [];
-		for (var row = 0; row < this._boardSize; row++) {
-			for (var col = 0; col < this._boardSize; col++) {
-				var el = this._elements[row][col];
+	public getCells(): BoardCell[] {
+		let r: BoardCell[] = [];
+		for (let row = 0; row < this._boardSize; row++) {
+			for (let col = 0; col < this._boardSize; col++) {
+				let el = this._elements[row][col];
 				if (!el.isEmpty) {
-					r.push(new boardCell.BoardCell(el.id, row, col, el.value));
+					r.push(new BoardCell(el.id, row, col, el.value));
 
 					if (el.mergedId) {
-						r.push(new boardCell.BoardCell(el.mergedId, row, col, 0));
+						r.push(new BoardCell(el.mergedId, row, col, 0));
 					}
 				}
 			}
@@ -99,20 +99,9 @@ export class Board {
 		return Math.floor(Math.random() * (max - min)) + min;
 	}
 
-	public isEmpty(): boolean {
-		for (var row = 0; row < this._boardSize; row++) {
-			for (var col = 0; col < this._boardSize; col++) {
-				if (!this._elements[row][col].isEmpty) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
 	public hasEmptyElement(): boolean {
-		for (var row = 0; row < this._boardSize; row++) {
-			for (var col = 0; col < this._boardSize; col++) {
+		for (let row = 0; row < this._boardSize; row++) {
+			for (let col = 0; col < this._boardSize; col++) {
 				if (this._elements[row][col].isEmpty) {
 					return true;
 				}
@@ -122,16 +111,16 @@ export class Board {
 	}
 
 	public isMergeable(): boolean {
-		for (var row = 0; row < this._boardSize; row++) {
-			for (var col = 0; col < this._boardSize; col++) {
-				var myValue = this._elements[row][col].value;
+		for (let row = 0; row < this._boardSize; row++) {
+			for (let col = 0; col < this._boardSize; col++) {
+				let myValue = this._elements[row][col].value;
 				if (myValue === 0) {
 					return true;
 				}
-				var aboveValue = row > 0 ? this._elements[row - 1][col].value : -1;
-				var belowValue = row + 1 < this._boardSize ? this._elements[row + 1][col].value : 1;
-				var leftValue = col > 0 ? this._elements[row][col - 1].value : -1;
-				var rightValue = col + 1 < this._boardSize ? this._elements[row][col + 1].value : 1;
+				let aboveValue = row > 0 ? this._elements[row - 1][col].value : -1;
+				let belowValue = row + 1 < this._boardSize ? this._elements[row + 1][col].value : 1;
+				let leftValue = col > 0 ? this._elements[row][col - 1].value : -1;
+				let rightValue = col + 1 < this._boardSize ? this._elements[row][col + 1].value : 1;
 				if (myValue === aboveValue || myValue === belowValue || myValue === leftValue || myValue === rightValue) {
 					return true;
 				}
@@ -140,3 +129,11 @@ export class Board {
 		return false;
 	}
 }
+
+export interface SerializedElement {
+	id: number;
+	mergedId: number;
+	value: number;
+}
+
+export type SerializedBoard = SerializedElement[][];

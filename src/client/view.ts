@@ -1,6 +1,7 @@
-/// <amd-dependency path="../../lib/css!./view" />
+/// <amd-dependency path="../lib/css!./view" />
 
 import int = require('../common/int');
+import {BoardCell} from '../common/boardCell';
 
 function pos(i: number): number {
 	return ViewCell.CELL_PADDING + i * (ViewCell.CELL_INNER_SIZE + ViewCell.CELL_PADDING);
@@ -109,8 +110,8 @@ export class View implements int.IModelListener {
 	public onChanged(model: int.IModel): void {
 
 		var id: string,
-			cells: int.IBoardCell[],
-			cell: int.IBoardCell,
+			cells: BoardCell[],
+			cell: BoardCell,
 			myCell: ViewCell;
 
 		for (id in this._cells) {
