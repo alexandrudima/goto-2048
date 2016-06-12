@@ -1,5 +1,5 @@
 
-import int = require('../common/int');
+import {ClientEventType, IClientEvent, ServerEventType, IServerEvent} from '../common/int';
 import {Board, SerializedBoard} from '../common/board';
 import {BoardCell} from '../common/boardCell';
 import {IModel, IModelListener} from '../common/model';
@@ -17,14 +17,14 @@ export class RemoteModel implements IModel {
 
 		socket.on('message', (data) => this._onMessage(data));
 		this._sendEvent({
-			type: int.ClientEventType.Init,
+			type: ClientEventType.Init,
 			data: gameId
 		});
 		this._listeners = [];
 		this._board = new Board(4);
 	}
 
-	private _sendEvent(event: int.IClientEvent): void {
+	private _sendEvent(event: IClientEvent): void {
 		this._socket.emit('message', event);
 	}
 
@@ -48,9 +48,9 @@ export class RemoteModel implements IModel {
 		}
 	}
 
-	private _onMessage(data: int.IServerEvent): void {
+	private _onMessage(data: IServerEvent): void {
 		switch (data.type) {
-			case int.ServerEventType.ModelChanged:
+			case ServerEventType.ModelChanged:
 				this._onServerModelChanged(data.data);
 				break;
 		}
@@ -75,35 +75,35 @@ export class RemoteModel implements IModel {
 
 	public reset(): void {
 		this._sendEvent({
-			type: int.ClientEventType.Reset,
+			type: ClientEventType.Reset,
 			data: this._gameId
 		});
 	}
 
 	public up(): void {
 		this._sendEvent({
-			type: int.ClientEventType.Up,
+			type: ClientEventType.Up,
 			data: this._gameId
 		});
 	}
 
 	public down(): void {
 		this._sendEvent({
-			type: int.ClientEventType.Down,
+			type: ClientEventType.Down,
 			data: this._gameId
 		});
 	}
 
 	public left(): void {
 		this._sendEvent({
-			type: int.ClientEventType.Left,
+			type: ClientEventType.Left,
 			data: this._gameId
 		});
 	}
 
 	public right(): void {
 		this._sendEvent({
-			type: int.ClientEventType.Right,
+			type: ClientEventType.Right,
 			data: this._gameId
 		});
 	}

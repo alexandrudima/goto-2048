@@ -1,45 +1,45 @@
 
 import * as express from 'express';
-import http = require('http');
-import sio = require('socket.io');
-import path = require('path');
-import _model = require('../common/simpleModel');
-import int = require('../common/int');
+import * as http from 'http';
+import * as sio from 'socket.io';
+import * as path from 'path';
+import {SimpleModel} from '../common/simpleModel';
+import {ClientEventType, IClientEvent, ServerEventType, IServerEvent} from '../common/int';
 import {IModel, IModelListener} from '../common/model';
 
-var app = express();
+let app = express();
 app.use(express.static(path.join(__dirname, '../../public')));
 
-var server = http.createServer(app);
-var io = sio.listen(server);
+let server = http.createServer(app);
+let io = sio.listen(server);
 
 server.listen(process.env.PORT || 8000);
 
 
-var modelsMap: { [gameId: string]: _model.SimpleModel; } = {};
+let modelsMap: { [gameId: string]: SimpleModel; } = {};
 
 io.sockets.on('connection', function (socket) {
 
-	var send = (event: int.IServerEvent) => {
+	let send = (event: IServerEvent) => {
 		socket.send(event);
 	};
 
-	var model: _model.SimpleModel = null;
+	let model: SimpleModel = null;
 
-	var modelListener: IModelListener = {
+	let modelListener: IModelListener = {
 		onChanged: (model: IModel) => {
 			send({
-				type: int.ServerEventType.ModelChanged,
-				data: (<_model.SimpleModel>model).serialize()
+				type: ServerEventType.ModelChanged,
+				data: (<SimpleModel>model).serialize()
 			});
 		}
 	};
 
-	function getOrCreateModel(gameId: string): _model.SimpleModel {
-		var r = modelsMap[gameId];
+	function getOrCreateModel(gameId: string): SimpleModel {
+		let r = modelsMap[gameId];
 
 		if (!r) {
-			r = new _model.SimpleModel(4);
+			r = new SimpleModel(4);
 			modelsMap[gameId] = r;
 		}
 
@@ -73,24 +73,24 @@ io.sockets.on('connection', function (socket) {
 	}
 
 	console.log('server got connection');
-	socket.on('message', function (msg: int.IClientEvent) {
+	socket.on('message', function (msg: IClientEvent) {
 		switch (msg.type) {
-			case int.ClientEventType.Init:
+			case ClientEventType.Init:
 				init(msg.data);
 				break;
-			case int.ClientEventType.Reset:
+			case ClientEventType.Reset:
 				reset(msg.data);
 				break;
-			case int.ClientEventType.Up:
+			case ClientEventType.Up:
 				up(msg.data);
 				break;
-			case int.ClientEventType.Down:
+			case ClientEventType.Down:
 				down(msg.data);
 				break;
-			case int.ClientEventType.Left:
+			case ClientEventType.Left:
 				left(msg.data);
 				break;
-			case int.ClientEventType.Right:
+			case ClientEventType.Right:
 				right(msg.data);
 				break;
 		}

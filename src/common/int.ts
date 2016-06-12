@@ -1,7 +1,8 @@
 
 import {SerializedBoard} from './board';
 
-// Events sent by the client
+// -- Events sent by the client
+
 export enum ClientEventType {
 	Init,
 	Reset,
@@ -10,15 +11,18 @@ export enum ClientEventType {
 	Left,
 	Right
 }
+
 export interface IClientEvent {
 	type: ClientEventType;
-	data: any;
+	data: string;
 }
 
-// Events sent by the server
+// -- Events sent by the server
+
 export enum ServerEventType {
 	ModelChanged
 }
+
 export interface IServerEvent {
 	type: ServerEventType;
 	data: SerializedBoard;

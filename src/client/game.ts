@@ -1,11 +1,10 @@
 
-import _model = require('../common/simpleModel');
-import remoteModel = require('./remoteModel');
-import int = require('../common/int');
-import view = require('./view');
+import {SimpleModel} from '../common/simpleModel';
+import {RemoteModel} from './remoteModel';
+import {View} from './view';
 import {IModel} from '../common/model';
 
-var createdModels: IModel[] = [];
+let createdModels: IModel[] = [];
 
 document.addEventListener('keydown', function (e) {
 	switch (e.keyCode) {
@@ -34,9 +33,9 @@ document.addEventListener('keydown', function (e) {
 export function create(domNode: HTMLElement) {
 	console.log('create!');
 
-	var model = new _model.SimpleModel(4);
+	let model = new SimpleModel(4);
 	createdModels.push(model);
-	var v = new view.View(domNode, model);
+	let v = new View(domNode, model);
 }
 
 export function createMultiplayer(domNode: HTMLElement, io: SocketIOStatic) {
@@ -44,7 +43,7 @@ export function createMultiplayer(domNode: HTMLElement, io: SocketIOStatic) {
 
 	if (location.hash === '') {
 		// Generate a new hash
-		var guid = (function () {
+		let guid = (function () {
 			function s4() {
 				return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 			}
@@ -54,10 +53,10 @@ export function createMultiplayer(domNode: HTMLElement, io: SocketIOStatic) {
 		})();
 		location.hash = guid();
 	}
-	var gameId = location.hash;
+	let gameId = location.hash;
 
-	var socket = io.connect((<any>location).origin);
-	var model = new remoteModel.RemoteModel(socket, gameId);
+	let socket = io.connect(location.origin);
+	let model = new RemoteModel(socket, gameId);
 	createdModels.push(model);
-	var v = new view.View(domNode, model);
+	let v = new View(domNode, model);
 }

@@ -2,6 +2,14 @@
 import {BoardElement} from './boardElement';
 import {BoardCell} from './boardCell';
 
+export interface SerializedElement {
+	id: number;
+	mergedId: number;
+	value: number;
+}
+
+export type SerializedBoard = SerializedElement[][];
+
 export class Board {
 
 	private _boardSize: number;
@@ -129,11 +137,3 @@ export class Board {
 		return false;
 	}
 }
-
-export interface SerializedElement {
-	id: number;
-	mergedId: number;
-	value: number;
-}
-
-export type SerializedBoard = SerializedElement[][];
