@@ -4,7 +4,7 @@ import {BoardCell} from './boardCell';
 import {BoardElement} from './boardElement';
 import {Board, SerializedBoard} from './board';
 
-export class Model implements IModel {
+export class SimpleModel implements IModel {
 
 	private _boardSize: number;
 	private _board: Board;
@@ -57,7 +57,7 @@ export class Model implements IModel {
 	public up(): void {
 		let newBoard = new Board(this._boardSize);
 		for (let col = 0; col < this._boardSize; col++) {
-			let rows = Model._mergeValues(this._extractNonZeroRows(col, false));
+			let rows = SimpleModel._mergeValues(this._extractNonZeroRows(col, false));
 			for (let row = 0; row < rows.length; row++) {
 				newBoard.set(row, col, rows[row]);
 			}
@@ -68,7 +68,7 @@ export class Model implements IModel {
 	public down(): void {
 		let newBoard = new Board(this._boardSize);
 		for (let col = 0; col < this._boardSize; col++) {
-			let rows = Model._mergeValues(this._extractNonZeroRows(col, true));
+			let rows = SimpleModel._mergeValues(this._extractNonZeroRows(col, true));
 			for (let row = 0; row < rows.length; row++) {
 				newBoard.set(this._boardSize - row - 1, col, rows[row]);
 			}
@@ -79,7 +79,7 @@ export class Model implements IModel {
 	public left(): void {
 		let newBoard = new Board(this._boardSize);
 		for (let row = 0; row < this._boardSize; row++) {
-			let columns = Model._mergeValues(this._extractNonZeroColumns(row, false));
+			let columns = SimpleModel._mergeValues(this._extractNonZeroColumns(row, false));
 			for (let col = 0; col < columns.length; col++) {
 				newBoard.set(row, col, columns[col]);
 			}
@@ -90,7 +90,7 @@ export class Model implements IModel {
 	public right(): void {
 		let newBoard = new Board(this._boardSize);
 		for (let row = 0; row < this._boardSize; row++) {
-			let columns = Model._mergeValues(this._extractNonZeroColumns(row, true));
+			let columns = SimpleModel._mergeValues(this._extractNonZeroColumns(row, true));
 			for (let col = 0; col < columns.length; col++) {
 				newBoard.set(row, this._boardSize - col - 1, columns[col]);
 			}

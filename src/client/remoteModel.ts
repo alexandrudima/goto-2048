@@ -1,14 +1,13 @@
-/// <reference path="../../lib/socket.io-client.d.ts" />
 
 import int = require('../common/int');
-import board = require('../common/board');
+import {Board, SerializedBoard} from '../common/board';
 import {BoardCell} from '../common/boardCell';
 
 export class RemoteModel implements int.IModel {
 
 	private _socket: SocketIOClient.Socket;
 	private _gameId: string;
-	private _board: board.Board;
+	private _board: Board;
 	private _listeners: int.IModelListener[];
 
 	constructor(socket: SocketIOClient.Socket, gameId: string) {
@@ -21,7 +20,7 @@ export class RemoteModel implements int.IModel {
 			data: gameId
 		});
 		this._listeners = [];
-		this._board = new board.Board(4);
+		this._board = new Board(4);
 	}
 
 	private _sendEvent(event: int.IClientEvent): void {
@@ -29,7 +28,7 @@ export class RemoteModel implements int.IModel {
 	}
 
 	public addListener(listener: int.IModelListener): void {
-		for (var i = 0; i < this._listeners.length; i++) {
+		for (let i = 0; i < this._listeners.length; i++) {
 			if (this._listeners[i] === listener) {
 				// Don't add the same listener twice
 				return;
@@ -40,7 +39,7 @@ export class RemoteModel implements int.IModel {
 	}
 
 	public removeListener(listener: int.IModelListener): void {
-		for (var i = 0; i < this._listeners.length; i++) {
+		for (let i = 0; i < this._listeners.length; i++) {
 			if (this._listeners[i] === listener) {
 				this._listeners.splice(i, 1);
 				return;
@@ -56,11 +55,11 @@ export class RemoteModel implements int.IModel {
 		}
 	}
 
-	private _onServerModelChanged(data: any): void {
-		this._board = board.Board.deserialize(data);
+	private _onServerModelChanged(data: SerializedBoard): void {
+		this._board = Board.deserialize(data);
 
-		var listeners = this._listeners.slice(0);
-		for (var i = 0; i < listeners.length; i++) {
+		let listeners = this._listeners.slice(0);
+		for (let i = 0; i < listeners.length; i++) {
 			listeners[i].onChanged(this);
 		}
 	}

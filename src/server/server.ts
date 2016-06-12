@@ -3,7 +3,7 @@ import * as express from 'express';
 import http = require('http');
 import sio = require('socket.io');
 import path = require('path');
-import _model = require('../common/model');
+import _model = require('../common/simpleModel');
 import int = require('../common/int');
 
 var app = express();
@@ -15,7 +15,7 @@ var io = sio.listen(server);
 server.listen(process.env.PORT || 8000);
 
 
-var modelsMap: { [gameId: string]: _model.Model; } = {};
+var modelsMap: { [gameId: string]: _model.SimpleModel; } = {};
 
 io.sockets.on('connection', function (socket) {
 
@@ -23,22 +23,22 @@ io.sockets.on('connection', function (socket) {
 		socket.send(event);
 	};
 
-	var model: _model.Model = null;
+	var model: _model.SimpleModel = null;
 
 	var modelListener: int.IModelListener = {
 		onChanged: (model: int.IModel) => {
 			send({
 				type: int.ServerEventType.ModelChanged,
-				data: (<_model.Model>model).serialize()
+				data: (<_model.SimpleModel>model).serialize()
 			});
 		}
 	};
 
-	function getOrCreateModel(gameId: string): _model.Model {
+	function getOrCreateModel(gameId: string): _model.SimpleModel {
 		var r = modelsMap[gameId];
 
 		if (!r) {
-			r = new _model.Model(4);
+			r = new _model.SimpleModel(4);
 			modelsMap[gameId] = r;
 		}
 

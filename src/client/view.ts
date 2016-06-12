@@ -1,6 +1,6 @@
-/// <amd-dependency path="../lib/css!./view" />
 
-import int = require('../common/int');
+import "../lib/css!./view";
+import {IModel, IModelListener} from '../common/int';
 import {BoardCell} from '../common/boardCell';
 
 function pos(i: number): number {
@@ -34,7 +34,7 @@ class ViewCell {
 		return this._isAlive;
 	}
 
-	public beforeUpdate(): void {
+	public onBeforeUpdate(): void {
 		this._isAlive = false;
 	}
 
@@ -44,10 +44,10 @@ class ViewCell {
 		this._domNode.style.left = ViewCell.CELL_PADDING + col * (ViewCell.CELL_INNER_SIZE + ViewCell.CELL_PADDING) + 'px';
 		this._domNode.style.top = ViewCell.CELL_PADDING + row * (ViewCell.CELL_INNER_SIZE + ViewCell.CELL_PADDING) + 'px';
 
-		var prevContent = this._domNode.innerHTML;
-		var content = value ? String(value) : '';
+		let prevContent = this._domNode.innerHTML;
+		let content = value ? String(value) : '';
 
-		var className = value ? ('view-cell v' + value) : 'view-cell';
+		let className = value ? ('view-cell v' + value) : 'view-cell';
 		if (!prevContent) {
 			className += ' new';
 		}
@@ -64,15 +64,15 @@ class ViewCell {
 	}
 }
 
-export class View implements int.IModelListener {
+export class View implements IModelListener {
 
 	private _domNode: HTMLElement;
-	private _model: int.IModel;
+	private _model: IModel;
 	private _cells: {
 		[id: string]: ViewCell;
 	};
 
-	constructor(domNode: HTMLElement, model: int.IModel) {
+	constructor(domNode: HTMLElement, model: IModel) {
 		this._domNode = document.createElement('div');
 		this._domNode.className = 'game-board';
 		this._model = model;
@@ -80,7 +80,7 @@ export class View implements int.IModelListener {
 		this._setup();
 		this._model.addListener(this);
 
-		var resetBtn = document.createElement('button');
+		let resetBtn = document.createElement('button');
 		resetBtn.className = 'game-button';
 		resetBtn.appendChild(document.createTextNode("Reset"));
 		domNode.appendChild(resetBtn);
@@ -88,7 +88,7 @@ export class View implements int.IModelListener {
 			this._model.reset();
 		};
 
-		var br = document.createElement('br');
+		let br = document.createElement('br');
 		br.className = ".clear";
 		domNode.appendChild(br);
 
@@ -96,9 +96,9 @@ export class View implements int.IModelListener {
 	}
 
 	private _setup(): void {
-		for (var row = 0; row < 4; row++) {
-			for (var col = 0; col < 4; col++) {
-				var div = document.createElement('div');
+		for (let row = 0; row < 4; row++) {
+			for (let col = 0; col < 4; col++) {
+				let div = document.createElement('div');
 				div.className = 'background-cell';
 				div.style.top = pos(row) + 'px';
 				div.style.left = pos(col) + 'px';
@@ -107,33 +107,28 @@ export class View implements int.IModelListener {
 		}
 	}
 
-	public onChanged(model: int.IModel): void {
+	public onChanged(model: IModel): void {
 
-		var id: string,
-			cells: BoardCell[],
-			cell: BoardCell,
-			myCell: ViewCell;
-
-		for (id in this._cells) {
-			this._cells[id].beforeUpdate();
+		for (let id in this._cells) {
+			this._cells[id].onBeforeUpdate();
 		}
 
-		cells = model.getCells();
+		let cells = model.getCells();
 
-		for (var i = 0; i < cells.length; i++) {
-			cell = cells[i];
+		for (let i = 0; i < cells.length; i++) {
+			let cell = cells[i];
 			if (this._cells[String(cell.id)]) {
-				myCell = this._cells[String(cell.id)];
+				let myCell = this._cells[String(cell.id)];
 				myCell.update(cell.row, cell.col, cell.value);
 			} else {
-				myCell = new ViewCell(cell.id, cell.row, cell.col, cell.value);
+				let myCell = new ViewCell(cell.id, cell.row, cell.col, cell.value);
 				this._cells[String(myCell.id)] = myCell;
 				this._domNode.appendChild(myCell.domNode);
 			}
 		}
 
-		for (id in this._cells) {
-			myCell = this._cells[id];
+		for (let id in this._cells) {
+			let myCell = this._cells[id];
 			if (!myCell.isAlive) {
 				myCell.domNode.parentElement.removeChild(myCell.domNode);
 				delete this._cells[id];

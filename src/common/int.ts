@@ -1,5 +1,6 @@
 
 import {BoardCell} from './boardCell';
+import {SerializedBoard} from './board';
 
 export interface IModelListener {
 	onChanged(model: IModel);
@@ -20,6 +21,7 @@ export interface IModel {
 	right(): void;
 }
 
+// Events sent by the client
 export enum ClientEventType {
 	Init,
 	Reset,
@@ -28,17 +30,16 @@ export enum ClientEventType {
 	Left,
 	Right
 }
-
-export enum ServerEventType {
-	ModelChanged
-}
-
 export interface IClientEvent {
 	type: ClientEventType;
 	data: any;
 }
 
+// Events sent by the server
+export enum ServerEventType {
+	ModelChanged
+}
 export interface IServerEvent {
 	type: ServerEventType;
-	data: any;
+	data: SerializedBoard;
 }

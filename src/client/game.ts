@@ -1,6 +1,5 @@
-/// <reference path="../../lib/socket.io-client.d.ts" />
 
-import _model = require('../common/model');
+import _model = require('../common/simpleModel');
 import remoteModel = require('./remoteModel');
 import int = require('../common/int');
 import view = require('./view');
@@ -34,7 +33,7 @@ document.addEventListener('keydown', function (e) {
 export function create(domNode: HTMLElement) {
 	console.log('create!');
 
-	var model = new _model.Model(4);
+	var model = new _model.SimpleModel(4);
 	createdModels.push(model);
 	var v = new view.View(domNode, model);
 }
