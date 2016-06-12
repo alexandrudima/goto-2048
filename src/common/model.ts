@@ -10,15 +10,15 @@ export class Model implements int.IModel {
 	private _board: board.Board;
 	private _listeners: int.IModelListener[];
 	private _lastElementId: number;
-	
+
 	constructor(boardSize: number) {
 		this._boardSize = boardSize;
 		this._listeners = [];
 		this._lastElementId = 0;
 		this._setBoard(new board.Board(this._boardSize));
 	}
-	
-	public addListener(listener:int.IModelListener): void {
+
+	public addListener(listener: int.IModelListener): void {
 		for (var i = 0; i < this._listeners.length; i++) {
 			if (this._listeners[i] === listener) {
 				// Don't add the same listener twice
@@ -28,8 +28,8 @@ export class Model implements int.IModel {
 		this._listeners.push(listener);
 		listener.onChanged(this);
 	}
-	
-	public removeListener(listener:int.IModelListener): void {
+
+	public removeListener(listener: int.IModelListener): void {
 		for (var i = 0; i < this._listeners.length; i++) {
 			if (this._listeners[i] === listener) {
 				this._listeners.splice(i, 1);
@@ -37,23 +37,23 @@ export class Model implements int.IModel {
 			}
 		}
 	}
-	
+
 	public serialize(): any {
 		return this._board.serialize();
 	}
-	
+
 	public getCells(): int.IBoardCell[] {
 		return this._board.getCells();
 	}
-	
+
 	public get isFinished(): boolean {
 		return !this._board.hasEmptyElement() && !this._board.isMergeable();
 	}
-	
+
 	public reset(): void {
 		this._setBoard(new board.Board(this._boardSize));
 	}
-	
+
 	public up(): void {
 		var newBoard = new board.Board(this._boardSize);
 		for (var col = 0; col < this._boardSize; col++) {
@@ -64,7 +64,7 @@ export class Model implements int.IModel {
 		}
 		this._setBoard(newBoard);
 	}
-	
+
 	public down(): void {
 		var newBoard = new board.Board(this._boardSize);
 		for (var col = 0; col < this._boardSize; col++) {
@@ -75,7 +75,7 @@ export class Model implements int.IModel {
 		}
 		this._setBoard(newBoard);
 	}
-	
+
 	public left(): void {
 		var newBoard = new board.Board(this._boardSize);
 		for (var row = 0; row < this._boardSize; row++) {
@@ -86,7 +86,7 @@ export class Model implements int.IModel {
 		}
 		this._setBoard(newBoard);
 	}
-	
+
 	public right(): void {
 		var newBoard = new board.Board(this._boardSize);
 		for (var row = 0; row < this._boardSize; row++) {
@@ -97,8 +97,8 @@ export class Model implements int.IModel {
 		}
 		this._setBoard(newBoard);
 	}
-	
-	private _setBoard(newBoard:board.Board) {
+
+	private _setBoard(newBoard: board.Board) {
 		newBoard.spawn(++this._lastElementId);
 		this._board = newBoard;
 		var listeners = this._listeners.slice(0);
@@ -106,8 +106,8 @@ export class Model implements int.IModel {
 			listeners[i].onChanged(this);
 		}
 	}
-	
-	private _extractNonZeroRows(col:number, reverse:boolean): boardElement.BoardElement[] {
+
+	private _extractNonZeroRows(col: number, reverse: boolean): boardElement.BoardElement[] {
 		var values: boardElement.BoardElement[] = [];
 		for (var row = 0; row < this._boardSize; row++) {
 			var el = this._board.get(row, col);
@@ -120,8 +120,8 @@ export class Model implements int.IModel {
 		}
 		return values;
 	}
-	
-	private _extractNonZeroColumns(row:number, reverse:boolean): boardElement.BoardElement[] {
+
+	private _extractNonZeroColumns(row: number, reverse: boolean): boardElement.BoardElement[] {
 		var values: boardElement.BoardElement[] = [];
 		for (var col = 0; col < this._boardSize; col++) {
 			var el = this._board.get(row, col);
@@ -134,8 +134,8 @@ export class Model implements int.IModel {
 		}
 		return values;
 	}
-	
-	private static _mergeValues(values:boardElement.BoardElement[]): boardElement.BoardElement[] {
+
+	private static _mergeValues(values: boardElement.BoardElement[]): boardElement.BoardElement[] {
 		var r: boardElement.BoardElement[] = [];
 		var previous = boardElement.BoardElement.EMPTY;
 		for (var i = 0; i < values.length; i++) {

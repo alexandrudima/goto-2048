@@ -5,12 +5,12 @@ export interface IModelListener {
 
 export interface IModel {
 	isFinished: boolean;
-	
+
 	addListener(listener: IModelListener): void;
 	removeListener(listener: IModelListener): void;
-	
+
 	getCells(): IBoardCell[];
-	
+
 	reset(): void;
 	up(): void;
 	down(): void;
@@ -19,9 +19,9 @@ export interface IModel {
 }
 
 export interface IBoardCell {
-	id: number;	
-	row: number;	
-	col: number;	
+	id: number;
+	row: number;
+	col: number;
 	value: number;
 }
 

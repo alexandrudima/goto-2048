@@ -4,11 +4,11 @@ import boardElement = require('./boardElement');
 import boardCell = require('./boardCell');
 
 export class Board {
-	
+
 	private _boardSize: number;
 	private _elements: boardElement.BoardElement[][];
-	
-	constructor(boardSize:number) {
+
+	constructor(boardSize: number) {
 		this._boardSize = boardSize;
 		this._elements = [];
 		for (var row = 0; row < boardSize; row++) {
@@ -18,16 +18,16 @@ export class Board {
 			}
 		}
 	}
-	
-	public set(row:number, column:number, value:boardElement.BoardElement): void {
+
+	public set(row: number, column: number, value: boardElement.BoardElement): void {
 		this._elements[row][column] = value;
 	}
-	
-	public get(row:number, column:number): boardElement.BoardElement {
+
+	public get(row: number, column: number): boardElement.BoardElement {
 		return this._elements[row][column];
 	}
-	
-	public spawn(id:number): void {
+
+	public spawn(id: number): void {
 		var emptySlots: number[] = [];
 		for (var row = 0; row < this._boardSize; row++) {
 			for (var col = 0; col < this._boardSize; col++) {
@@ -42,16 +42,16 @@ export class Board {
 		var pickedSlot = emptySlots[Board.getRandomInt(0, emptySlots.length)];
 		var row = Math.floor(pickedSlot / this._boardSize);
 		var col = pickedSlot % this._boardSize;
-		
+
 		var pickedValue = Board.getRandomInt(1, 3) * 2;
 
 		this.set(row, col, new boardElement.BoardElement(id, 0, pickedValue));
 	}
-	
-	public static deserialize(data:any): Board {
+
+	public static deserialize(data: any): Board {
 		var size = data.length;
 		var r = new Board(size);
-		
+
 		for (var row = 0; row < size; row++) {
 			for (var col = 0; col < size; col++) {
 				var el = data[row][col];
@@ -61,7 +61,7 @@ export class Board {
 
 		return r;
 	}
-	
+
 	public serialize(): any {
 		var r: any[][] = [];
 		for (var row = 0; row < this._boardSize; row++) {
@@ -77,7 +77,7 @@ export class Board {
 		}
 		return r;
 	}
-	
+
 	public getCells(): int.IBoardCell[] {
 		var r: int.IBoardCell[] = [];
 		for (var row = 0; row < this._boardSize; row++) {
@@ -85,7 +85,7 @@ export class Board {
 				var el = this._elements[row][col];
 				if (!el.isEmpty) {
 					r.push(new boardCell.BoardCell(el.id, row, col, el.value));
-					
+
 					if (el.mergedId) {
 						r.push(new boardCell.BoardCell(el.mergedId, row, col, 0));
 					}
@@ -94,11 +94,11 @@ export class Board {
 		}
 		return r;
 	}
-	
+
 	private static getRandomInt(min, max) {
 		return Math.floor(Math.random() * (max - min)) + min;
 	}
-	
+
 	public isEmpty(): boolean {
 		for (var row = 0; row < this._boardSize; row++) {
 			for (var col = 0; col < this._boardSize; col++) {
@@ -109,7 +109,7 @@ export class Board {
 		}
 		return true;
 	}
-	
+
 	public hasEmptyElement(): boolean {
 		for (var row = 0; row < this._boardSize; row++) {
 			for (var col = 0; col < this._boardSize; col++) {
@@ -120,7 +120,7 @@ export class Board {
 		}
 		return false;
 	}
-	
+
 	public isMergeable(): boolean {
 		for (var row = 0; row < this._boardSize; row++) {
 			for (var col = 0; col < this._boardSize; col++) {

@@ -26,8 +26,8 @@ io.sockets.on('connection', function (socket) {
 		socket.send(event);
 	};
 
-	var model:_model.Model = null;
-	
+	var model: _model.Model = null;
+
 	var modelListener: int.IModelListener = {
 		onChanged: (model: int.IModel) => {
 			send({
@@ -36,10 +36,10 @@ io.sockets.on('connection', function (socket) {
 			});
 		}
 	};
-	
-	function getOrCreateModel(gameId:string): _model.Model {
+
+	function getOrCreateModel(gameId: string): _model.Model {
 		var r = modelsMap[gameId];
-		
+
 		if (!r) {
 			r = new _model.Model(4);
 			modelsMap[gameId] = r;
@@ -47,35 +47,35 @@ io.sockets.on('connection', function (socket) {
 
 		return r;
 	}
-	
-	function init(gameId:string): void {
+
+	function init(gameId: string): void {
 		if (model) {
 			model.removeListener(modelListener);
 			model = null;
 		}
-		
+
 		model = getOrCreateModel(gameId);
 		model.addListener(modelListener);
 	}
-	function reset(gameId:string): void {
+	function reset(gameId: string): void {
 		model = getOrCreateModel(gameId);
 		model.reset();
 	}
-	function up(gameId:string): void {
+	function up(gameId: string): void {
 		getOrCreateModel(gameId).up();
 	}
-	function down(gameId:string): void {
+	function down(gameId: string): void {
 		getOrCreateModel(gameId).down();
 	}
-	function left(gameId:string): void {
+	function left(gameId: string): void {
 		getOrCreateModel(gameId).left();
 	}
-	function right(gameId:string): void {
+	function right(gameId: string): void {
 		getOrCreateModel(gameId).right();
 	}
-	
+
 	console.log('server got connection');
-	socket.on('message', function (msg:int.IClientEvent) {
+	socket.on('message', function (msg: int.IClientEvent) {
 		switch (msg.type) {
 			case int.ClientEventType.Init:
 				init(msg.data);
@@ -97,7 +97,7 @@ io.sockets.on('connection', function (socket) {
 				break;
 		}
 	});
-	
+
 	socket.on('disconnect', function () {
 		if (model) {
 			model.removeListener(modelListener);
